@@ -11,26 +11,27 @@ import org.springframework.stereotype.Component
 
 @Component
 class Rq(
-        private val req: HttpServletRequest,
-        private val resp: HttpServletResponse,
-        private val memberService: MemberService,
-        ) {
+    private val req: HttpServletRequest,
+    private val resp: HttpServletResponse,
+    private val memberService: MemberService,
+) {
     val actor: Member
-    get() = SecurityContextHolder
+        get() = SecurityContextHolder
             .getContext()
             ?.authentication
             ?.principal
             ?.let {
-        if (it is SecurityUser) {
-            Member(it.id, it.username, it.nickname)
-        } else {
-            null
-        }
-    }
+                if (it is SecurityUser) {
+                    Member(it.id, it.username, it.nickname)
+                } else {
+                    null
+                }
+            }
             ?: throw IllegalStateException("인증된 사용자가 없습니다.")
 
     val actorFromDb: Member
-    get() = memberService.findById(actor.id).get()
+            get() = memberService.findById(actor.id)
+                ?: throw IllegalStateException("DB에서 회원을 찾을 수 없습니다.")
 
     fun getHeader(name: String, defaultValue: String): String {
         return req.getHeader(name) ?: defaultValue
@@ -41,7 +42,7 @@ class Rq(
     }
 
     fun getCookieValue(name: String, defaultValue: String): String =
-    req.cookies
+        req.cookies
             ?.firstOrNull { it.name == name }
             ?.value
             ?.takeIf { it.isNotBlank() }

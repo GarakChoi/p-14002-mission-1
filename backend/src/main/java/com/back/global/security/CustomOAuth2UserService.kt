@@ -14,14 +14,14 @@ private enum class OAuth2Provider {
 
     companion object {
         fun from(registrationId: String): OAuth2Provider =
-                entries.firstOrNull { it.name.equals(registrationId, ignoreCase = true) }
+            entries.firstOrNull { it.name.equals(registrationId, ignoreCase = true) }
                 ?: error("Unsupported provider: $registrationId")
     }
 }
 
 @Service
 class CustomOAuth2UserService(
-        private val memberService: MemberService
+    private val memberService: MemberService
 ) : DefaultOAuth2UserService() {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -36,25 +36,25 @@ class CustomOAuth2UserService(
             OAuth2Provider.KAKAO -> {
                 val props = (oAuth2User.attributes.getValue("properties") as Map<String, Any>)
                 Triple(
-                        oAuth2User.name,
-                        props.getValue("nickname") as String,
-                        props.getValue("profile_image") as String
+                    oAuth2User.name,
+                    props.getValue("nickname") as String,
+                    props.getValue("profile_image") as String
                 )
             }
             OAuth2Provider.GOOGLE -> {
                 val attrs = oAuth2User.attributes
                 Triple(
-                        oAuth2User.name,
-                        attrs.getValue("name") as String,
-                        attrs.getValue("picture") as String
+                    oAuth2User.name,
+                    attrs.getValue("name") as String,
+                    attrs.getValue("picture") as String
                 )
             }
             OAuth2Provider.NAVER -> {
                 val resp = (oAuth2User.attributes.getValue("response") as Map<String, Any>)
                 Triple(
-                        resp.getValue("id") as String,
-                        resp.getValue("nickname") as String,
-                        resp.getValue("profile_image") as String
+                    resp.getValue("id") as String,
+                    resp.getValue("nickname") as String,
+                    resp.getValue("profile_image") as String
                 )
             }
         }
@@ -66,15 +66,16 @@ class CustomOAuth2UserService(
         logger.debug("Resolved username={}", username)
 
         val member = memberService.modifyOrJoin(username, password, nickname, profileImgUrl).data
+            ?: throw IllegalStateException("회원 정보가 없습니다.")
 
         logger.debug("Member upserted: id={}, username={}", member.id, member.username)
 
         return SecurityUser(
-                member.id,
-                member.username,
-                member.password,
-                member.name,
-                member.authorities
+            member.id,
+            member.username,
+            member.password ?: "",
+            member.name,
+            member.authorities
         )
     }
 }
