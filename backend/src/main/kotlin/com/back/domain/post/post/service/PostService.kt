@@ -10,16 +10,21 @@ import org.springframework.stereotype.Service
 class PostService(
     private val postRepository: PostRepository
 ) {
-    fun count(): Long = postRepository.count()
+    fun count(): Long {
+        return postRepository.count()
+    }
 
     fun write(author: Member, title: String, content: String): Post {
         val post = Post(author, title, content)
+
         return postRepository.save(post)
     }
 
     fun findById(id: Int): Post? = postRepository.findById(id).orElse(null)
 
-    fun findAll(): List<Post> = postRepository.findAll()
+    fun findAll(): List<Post> {
+        return postRepository.findAll()
+    }
 
     fun modify(post: Post, title: String, content: String) {
         post.modify(title, content)
@@ -41,7 +46,9 @@ class PostService(
         postRepository.delete(post)
     }
 
-    fun findLatest(): Post? = postRepository.findFirstByOrderByIdDesc()
+    fun findLatest(): Post? {
+        return postRepository.findFirstByOrderByIdDesc()
+    }
 
     fun flush() {
         postRepository.flush()

@@ -34,87 +34,87 @@ class ApiV1MemberControllerTest {
     @DisplayName("회원가입")
     fun t1() {
         val resultActions = mvc
-                .perform(
-                        post("/api/v1/members")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(
-                                        """
-                                        {
-                                            "username": "usernew",
-                                            "password": "1234",
-                                            "nickname": "무명"
-                                        }
-                                    """
-                                )
-                )
-                .andDo(print())
+            .perform(
+                post("/api/v1/members")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
+                        {
+                            "username": "usernew",
+                            "password": "1234",
+                            "nickname": "무명"
+                        }
+                    """
+                    )
+            )
+            .andDo(print())
 
         val member = memberService.findByUsername("usernew").getOrThrow()
 
         resultActions
-                .andExpect(handler().handlerType(ApiV1MemberController::class.java))
+            .andExpect(handler().handlerType(ApiV1MemberController::class.java))
             .andExpect(handler().methodName("join"))
-                .andExpect(status().isCreated)
-                .andExpect(jsonPath("$.resultCode").value("201-1"))
-                .andExpect(jsonPath("$.msg").value("${member.name}님 환영합니다. 회원가입이 완료되었습니다."))
-                .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data.id").value(member.id))
-                .andExpect(jsonPath("$.data.createDate").value(Matchers.startsWith(member.createDate.toString().take(20))))
-                .andExpect(jsonPath("$.data.modifyDate").value(Matchers.startsWith(member.modifyDate.toString().take(20))))
-                .andExpect(jsonPath("$.data.name").value(member.name))
-                .andExpect(jsonPath("$.data.isAdmin").value(member.isAdmin))
+            .andExpect(status().isCreated)
+            .andExpect(jsonPath("$.resultCode").value("201-1"))
+            .andExpect(jsonPath("$.msg").value("${member.name}님 환영합니다. 회원가입이 완료되었습니다."))
+            .andExpect(jsonPath("$.data").exists())
+            .andExpect(jsonPath("$.data.id").value(member.id))
+            .andExpect(jsonPath("$.data.createDate").value(Matchers.startsWith(member.createDate.toString().take(20))))
+            .andExpect(jsonPath("$.data.modifyDate").value(Matchers.startsWith(member.modifyDate.toString().take(20))))
+            .andExpect(jsonPath("$.data.name").value(member.name))
+            .andExpect(jsonPath("$.data.isAdmin").value(member.isAdmin))
     }
 
     @Test
     @DisplayName("로그인")
     fun t2() {
         val resultActions = mvc
-                .perform(
-                        post("/api/v1/members/login")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(
-                                        """
-                                        {
-                                            "username": "user1",
-                                            "password": "1234"
-                                        }
-                                    """
-                                )
-                )
-                .andDo(print())
+            .perform(
+                post("/api/v1/members/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
+                        {
+                            "username": "user1",
+                            "password": "1234"
+                        }
+                    """
+                    )
+            )
+            .andDo(print())
 
         val member = memberService.findByUsername("user1").getOrThrow()
 
         resultActions
-                .andExpect(handler().handlerType(ApiV1MemberController::class.java))
+            .andExpect(handler().handlerType(ApiV1MemberController::class.java))
             .andExpect(handler().methodName("login"))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.msg").value("${member.nickname}님 환영합니다."))
-                .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data.item").exists())
-                .andExpect(jsonPath("$.data.item.id").value(member.id))
-                .andExpect(
-                        jsonPath("$.data.item.createDate").value(
-                                Matchers.startsWith(
-                                        member.createDate.toString().take(20)
-                                )
-                        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.resultCode").value("200-1"))
+            .andExpect(jsonPath("$.msg").value("${member.nickname}님 환영합니다."))
+            .andExpect(jsonPath("$.data").exists())
+            .andExpect(jsonPath("$.data.item").exists())
+            .andExpect(jsonPath("$.data.item.id").value(member.id))
+            .andExpect(
+                jsonPath("$.data.item.createDate").value(
+                    Matchers.startsWith(
+                        member.createDate.toString().take(20)
+                    )
                 )
-                .andExpect(
-                        jsonPath("$.data.item.modifyDate").value(
-                                Matchers.startsWith(
-                                        member.modifyDate.toString().take(20)
-                                )
-                        )
+            )
+            .andExpect(
+                jsonPath("$.data.item.modifyDate").value(
+                    Matchers.startsWith(
+                        member.modifyDate.toString().take(20)
+                    )
                 )
-                .andExpect(jsonPath("$.data.item.name").value(member.name))
-                .andExpect(jsonPath("$.data.item.isAdmin").value(member.isAdmin))
-                .andExpect(jsonPath("$.data.apiKey").value(member.apiKey))
-                .andExpect(jsonPath("$.data.accessToken").isNotEmpty)
+            )
+            .andExpect(jsonPath("$.data.item.name").value(member.name))
+            .andExpect(jsonPath("$.data.item.isAdmin").value(member.isAdmin))
+            .andExpect(jsonPath("$.data.apiKey").value(member.apiKey))
+            .andExpect(jsonPath("$.data.accessToken").isNotEmpty)
 
         resultActions.andExpect { result ->
-                val apiKeyCookie = result.response.getCookie("apiKey").getOrThrow()
+            val apiKeyCookie = result.response.getCookie("apiKey").getOrThrow()
             assertThat(apiKeyCookie.value).isEqualTo(member.apiKey)
             assertThat(apiKeyCookie.path).isEqualTo("/")
             assertThat(apiKeyCookie.getAttribute("HttpOnly")).isEqualTo("true")
@@ -131,23 +131,23 @@ class ApiV1MemberControllerTest {
     @WithUserDetails("user1")
     fun t3() {
         val resultActions = mvc
-                .perform(
-                        get("/api/v1/members/me")
-                )
-                .andDo(print())
+            .perform(
+                get("/api/v1/members/me")
+            )
+            .andDo(print())
 
         val member = memberService.findByUsername("user1").getOrThrow()
 
         resultActions
-                .andExpect(handler().handlerType(ApiV1MemberController::class.java))
+            .andExpect(handler().handlerType(ApiV1MemberController::class.java))
             .andExpect(handler().methodName("me"))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.id").value(member.id))
-                .andExpect(jsonPath("$.createDate").value(Matchers.startsWith(member.createDate.toString().take(20))))
-                .andExpect(jsonPath("$.modifyDate").value(Matchers.startsWith(member.modifyDate.toString().take(20))))
-                .andExpect(jsonPath("$.name").value(member.name))
-                .andExpect(jsonPath("$.username").value(member.username))
-                .andExpect(jsonPath("$.isAdmin").value(member.isAdmin))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").value(member.id))
+            .andExpect(jsonPath("$.createDate").value(Matchers.startsWith(member.createDate.toString().take(20))))
+            .andExpect(jsonPath("$.modifyDate").value(Matchers.startsWith(member.modifyDate.toString().take(20))))
+            .andExpect(jsonPath("$.name").value(member.name))
+            .andExpect(jsonPath("$.username").value(member.username))
+            .andExpect(jsonPath("$.isAdmin").value(member.isAdmin))
     }
 
     @Test
@@ -157,46 +157,46 @@ class ApiV1MemberControllerTest {
         val actorApiKey = actor.apiKey
 
         val resultActions = mvc
-                .perform(
-                        get("/api/v1/members/me")
-                                .cookie(Cookie("apiKey", actorApiKey))
-                )
-                .andDo(print())
+            .perform(
+                get("/api/v1/members/me")
+                    .cookie(Cookie("apiKey", actorApiKey))
+            )
+            .andDo(print())
 
         resultActions
-                .andExpect(handler().handlerType(ApiV1MemberController::class.java))
+            .andExpect(handler().handlerType(ApiV1MemberController::class.java))
             .andExpect(handler().methodName("me"))
-                .andExpect(status().isOk)
+            .andExpect(status().isOk)
     }
 
     @Test
     @DisplayName("로그아웃")
     fun t6() {
         val resultActions = mvc
-                .perform(
-                        delete("/api/v1/members/logout")
-                )
-                .andDo(print())
+            .perform(
+                delete("/api/v1/members/logout")
+            )
+            .andDo(print())
 
         resultActions
-                .andExpect(handler().handlerType(ApiV1MemberController::class.java))
+            .andExpect(handler().handlerType(ApiV1MemberController::class.java))
             .andExpect(handler().methodName("logout"))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.resultCode").value("200-1"))
-                .andExpect(jsonPath("$.msg").value("로그아웃 되었습니다."))
-                .andExpect { result ->
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.resultCode").value("200-1"))
+            .andExpect(jsonPath("$.msg").value("로그아웃 되었습니다."))
+            .andExpect { result ->
                 val apiKeyCookie = result.response.getCookie("apiKey").getOrThrow()
-            assertThat(apiKeyCookie.value).isEmpty()
-            assertThat(apiKeyCookie.maxAge).isEqualTo(0)
-            assertThat(apiKeyCookie.path).isEqualTo("/")
-            assertThat(apiKeyCookie.isHttpOnly).isTrue
+                assertThat(apiKeyCookie.value).isEmpty()
+                assertThat(apiKeyCookie.maxAge).isEqualTo(0)
+                assertThat(apiKeyCookie.path).isEqualTo("/")
+                assertThat(apiKeyCookie.isHttpOnly).isTrue
 
-            val accessTokenCookie = result.response.getCookie("accessToken").getOrThrow()
-            assertThat(accessTokenCookie.value).isEmpty()
-            assertThat(accessTokenCookie.maxAge).isEqualTo(0)
-            assertThat(accessTokenCookie.path).isEqualTo("/")
-            assertThat(accessTokenCookie.isHttpOnly).isTrue
-        }
+                val accessTokenCookie = result.response.getCookie("accessToken").getOrThrow()
+                assertThat(accessTokenCookie.value).isEmpty()
+                assertThat(accessTokenCookie.maxAge).isEqualTo(0)
+                assertThat(accessTokenCookie.path).isEqualTo("/")
+                assertThat(accessTokenCookie.isHttpOnly).isTrue
+            }
     }
 
     @Test
@@ -206,19 +206,19 @@ class ApiV1MemberControllerTest {
         val actorApiKey = actor.apiKey
 
         val resultActions = mvc
-                .perform(
-                        get("/api/v1/members/me")
-                                .header("Authorization", "Bearer $actorApiKey wrong-access-token")
-                )
-                .andDo(print())
+            .perform(
+                get("/api/v1/members/me")
+                    .header("Authorization", "Bearer $actorApiKey wrong-access-token")
+            )
+            .andDo(print())
 
         resultActions
-                .andExpect(handler().handlerType(ApiV1MemberController::class.java))
+            .andExpect(handler().handlerType(ApiV1MemberController::class.java))
             .andExpect(handler().methodName("me"))
-                .andExpect(status().isOk)
+            .andExpect(status().isOk)
 
         resultActions.andExpect { result ->
-                val accessTokenCookie = result.response.getCookie("accessToken").getOrThrow()
+            val accessTokenCookie = result.response.getCookie("accessToken").getOrThrow()
             assertThat(accessTokenCookie.value).isNotBlank
             assertThat(accessTokenCookie.path).isEqualTo("/")
             assertThat(accessTokenCookie.getAttribute("HttpOnly")).isEqualTo("true")
@@ -234,15 +234,15 @@ class ApiV1MemberControllerTest {
     @DisplayName("Authorization 헤더가 Bearer 형식이 아닐 때 오류")
     fun t8() {
         val resultActions = mvc
-                .perform(
-                        get("/api/v1/members/me")
-                                .header("Authorization", "key")
-                )
-                .andDo(print())
+            .perform(
+                get("/api/v1/members/me")
+                    .header("Authorization", "key")
+            )
+            .andDo(print())
 
         resultActions
-                .andExpect(status().isUnauthorized)
-                .andExpect(jsonPath("$.resultCode").value("401-2"))
-                .andExpect(jsonPath("$.msg").value("Authorization 헤더가 Bearer 형식이 아닙니다."))
+            .andExpect(status().isUnauthorized)
+            .andExpect(jsonPath("$.resultCode").value("401-2"))
+            .andExpect(jsonPath("$.msg").value("Authorization 헤더가 Bearer 형식이 아닙니다."))
     }
 }

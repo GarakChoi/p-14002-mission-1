@@ -44,11 +44,11 @@ class ApiV1PostControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         """
-                        {
-                            "title": "제목",
-                            "content": "내용"
-                        }
-                    """
+                            {
+                                "title": "제목",
+                                "content": "내용"
+                            }
+                            """
                     )
             )
             .andDo(print())
@@ -82,11 +82,11 @@ class ApiV1PostControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         """
-                        {
-                            "title": "제목",
-                            "content": "내용"
-                        }
-                    """
+                            {
+                                "title": "제목",
+                                "content": "내용"
+                            }
+                            """
                     )
             )
             .andDo(print())
@@ -113,11 +113,11 @@ class ApiV1PostControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         """
-                        {
-                            "title": "제목",
-                            "content": "내용"
-                        }
-                    """
+                            {
+                                "title": "제목",
+                                "content": "내용"
+                            }
+                            """
                     )
             )
             .andDo(print())
@@ -138,11 +138,11 @@ class ApiV1PostControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         """
-                        {
-                            "title": "",
-                            "content": "내용"
-                        }
-                    """
+                            {
+                                "title": "",
+                                "content": "내용"
+                            }
+                            """
                     )
             )
             .andDo(print())
@@ -156,8 +156,8 @@ class ApiV1PostControllerTest {
                 jsonPath("$.msg").value(
                     """
                         title-NotBlank-must not be blank
-                        title-Size-size must be between 2 and 100                        
-                        """.trimIndent().trim()
+                        title-Size-size must be between 2 and 100
+                        """.trimIndent()
                 )
             )
     }
@@ -172,11 +172,11 @@ class ApiV1PostControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         """
-                        {
-                            "title": "제목",
-                            "content": ""
-                        }
-                    """
+                            {
+                                "title": "제목",
+                                "content": ""
+                            }
+                            """
                     )
             )
             .andDo(print())
@@ -191,7 +191,7 @@ class ApiV1PostControllerTest {
                     """
                         content-NotBlank-must not be blank
                         content-Size-size must be between 2 and 5000
-                        """.trimIndent().trim()
+                        """.trimIndent()
                 )
             )
     }
@@ -201,10 +201,11 @@ class ApiV1PostControllerTest {
     @WithUserDetails("user1")
     fun t9() {
         val wrongJsonBody = """
-                {
-                    "title": 제목",
-                    content": "내용"
-                """.trimIndent()
+            {
+                "title": 제목",
+                content": "내용"
+                
+            """.trimIndent()
 
         val resultActions = mvc
             .perform(
@@ -233,11 +234,11 @@ class ApiV1PostControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         """
-                        {
-                            "title": "제목",
-                            "content": "내용"
-                        }
-                    """
+                            {
+                                "title": "제목",
+                                "content": "내용"
+                            }
+                            """
                     )
             )
             .andDo(print())
@@ -258,11 +259,11 @@ class ApiV1PostControllerTest {
                     .header("Authorization", "Bearer wrong-api-key")
                     .content(
                         """
-                        {
-                            "title": "제목",
-                            "content": "내용"
-                        }
-                    """
+                            {
+                                "title": "제목",
+                                "content": "내용"
+                            }
+                            """
                     )
             )
             .andDo(print())
@@ -286,11 +287,11 @@ class ApiV1PostControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         """
-                        {
-                            "title": "제목 new",
-                            "content": "내용 new"
-                        }
-                    """
+                            {
+                                "title": "제목 new",
+                                "content": "내용 new"
+                            }
+                            """
                     )
             )
             .andDo(print())
@@ -318,11 +319,11 @@ class ApiV1PostControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(
                         """
-                        {
-                            "title": "제목 new",
-                            "content": "내용 new"
-                        }
-                    """
+                            {
+                                "title": "제목 new",
+                                "content": "내용 new"
+                            }
+                            """
                     )
             )
             .andDo(print())

@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
+    kotlin("kapt") version "1.9.25"
 }
 
 group = "com"
@@ -36,9 +37,6 @@ dependencies {
 
     runtimeOnly("com.h2database:h2")
 
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
-
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -46,6 +44,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    implementation("io.github.openfeign.querydsl:querydsl-jpa:7.0")
+    kapt("io.github.openfeign.querydsl:querydsl-apt:7.0:jpa")
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 

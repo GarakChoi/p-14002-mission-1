@@ -17,9 +17,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 class SecurityConfig(
-        private val customAuthenticationFilter: CustomAuthenticationFilter,
-        private val customOAuth2LoginSuccessHandler: CustomOAuth2LoginSuccessHandler,
-        private val customOAuth2AuthorizationRequestResolver: CustomOAuth2AuthorizationRequestResolver
+    private val customAuthenticationFilter: CustomAuthenticationFilter,
+    private val customOAuth2LoginSuccessHandler: CustomOAuth2LoginSuccessHandler,
+    private val customOAuth2AuthorizationRequestResolver: CustomOAuth2AuthorizationRequestResolver
 ) {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
@@ -63,24 +63,24 @@ class SecurityConfig(
 
             addFilterBefore<UsernamePasswordAuthenticationFilter>(customAuthenticationFilter)
 
-                    exceptionHandling {
+            exceptionHandling {
                 authenticationEntryPoint = AuthenticationEntryPoint { _, response, _ ->
-                        response.contentType = "application/json;charset=UTF-8"
+                    response.contentType = "application/json;charset=UTF-8"
                     response.status = 401
                     response.writer.write(
-                            Ut.json.toString(
-                                    RsData<Void>("401-1", "로그인 후 이용해주세요.")
-                    )
+                        Ut.json.toString(
+                            RsData<Void>("401-1", "로그인 후 이용해주세요.")
+                        )
                     )
                 }
 
                 accessDeniedHandler = AccessDeniedHandler { _, response, _ ->
-                        response.contentType = "application/json;charset=UTF-8"
+                    response.contentType = "application/json;charset=UTF-8"
                     response.status = 403
                     response.writer.write(
-                            Ut.json.toString(
-                                    RsData<Void>("403-1", "권한이 없습니다.")
-                    )
+                        Ut.json.toString(
+                            RsData<Void>("403-1", "권한이 없습니다.")
+                        )
                     )
                 }
             }

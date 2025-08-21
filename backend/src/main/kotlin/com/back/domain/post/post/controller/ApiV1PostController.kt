@@ -1,11 +1,11 @@
 package com.back.domain.post.post.controller
 
-import com.back.domain.member.member.service.MemberService
 import com.back.domain.post.post.dto.PostDto
 import com.back.domain.post.post.dto.PostWithContentDto
 import com.back.domain.post.post.service.PostService
 import com.back.global.rq.Rq
 import com.back.global.rsData.RsData
+import com.back.standard.extensions.getOrThrow
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -28,6 +28,7 @@ class ApiV1PostController(
     @Operation(summary = "다건 조회")
     fun getItems(): List<PostDto> {
         val items = postService.findAll()
+
         return items.map { PostDto(it) }
     }
 
@@ -35,20 +36,25 @@ class ApiV1PostController(
     @Transactional(readOnly = true)
     @Operation(summary = "단건 조회")
     fun getItem(@PathVariable id: Int): PostWithContentDto {
-        val post = postService.findById(id)
-            ?: throw NoSuchElementException("Post not found")
+        val post = postService.findById(id).getOrThrow()
+
         return PostWithContentDto(post)
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(summary = "삭제")
-    fun delete(@PathVariable id: Int): RsData<Void> {
+    fun delete(
+        @PathVariable id: Int
+    ): RsData<Void> {
         val actor = rq.actor
-        val post = postService.findById(id)
-            ?: throw NoSuchElementException("Post not found")
+
+        val post = postService.findById(id).getOrThrow()
+
         post.checkActorCanDelete(actor)
+
         postService.delete(post)
+
         return RsData(
             "200-1",
             "${id}번 글이 삭제되었습니다."
@@ -71,7 +77,9 @@ class ApiV1PostController(
         @Valid @RequestBody reqBody: PostWriteReqBody
     ): RsData<PostDto> {
         val actor = rq.actor
+
         val post = postService.write(actor, reqBody.title, reqBody.content)
+
         return RsData(
             "201-1",
             "${post.id}번 글이 작성되었습니다.",
@@ -96,10 +104,13 @@ class ApiV1PostController(
         @Valid @RequestBody reqBody: PostModifyReqBody
     ): RsData<Void> {
         val actor = rq.actor
-        val post = postService.findById(id)
-            ?: throw NoSuchElementException("Post not found")
+
+        val post = postService.findById(id).getOrThrow()
+
         post.checkActorCanModify(actor)
+
         postService.modify(post, reqBody.title, reqBody.content)
+
         return RsData(
             "200-1",
             "${post.id}번 글이 수정되었습니다."

@@ -6,13 +6,12 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class AuthTokenService {
-    @Value("\${custom.jwt.secretKey}")
-    lateinit var jwtSecretKey: String
-
-    @Value("\${custom.accessToken.expirationSeconds}")
-    var accessTokenExpirationSeconds: Int = 0
-
+class AuthTokenService(
+    @param:Value("\${custom.jwt.secretKey}")
+    private val jwtSecretKey: String,
+    @param:Value("\${custom.accessToken.expirationSeconds}")
+    private val accessTokenExpirationSeconds: Int
+) {
     fun genAccessToken(member: Member): String {
         val id = member.id
         val username = member.username
@@ -21,17 +20,22 @@ class AuthTokenService {
         return Ut.jwt.toString(
             jwtSecretKey,
             accessTokenExpirationSeconds,
-            mapOf("id" to id, "username" to username, "name" to name)
+            mapOf(
+                "id" to id,
+                "username" to username,
+                "name" to name
+            )
         )
     }
 
     fun payload(accessToken: String): Map<String, Any>? {
-        val parsedPayload = Ut.jwt.payload(jwtSecretKey, accessToken) ?: return null
+        val parsedPayload = Ut.jwt.payload(jwtSecretKey, accessToken)
+            ?: return null
 
-        val id = parsedPayload["id"] as Int
-        val username = parsedPayload["username"] as String
-        val name = parsedPayload["name"] as String
-
-        return mapOf("id" to id, "username" to username, "name" to name)
+        return mapOf(
+            "id" to parsedPayload["id"] as Int,
+            "username" to parsedPayload["username"] as String,
+            "name" to parsedPayload["name"] as String
+        )
     }
 }

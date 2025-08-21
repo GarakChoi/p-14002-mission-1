@@ -10,9 +10,8 @@ import org.springframework.stereotype.Component
 @Aspect
 @Component
 class ResponseAspect(
-    private val response: HttpServletResponse
+    private val response: HttpServletResponse, // 스프링이 요청 스코프 프록시로 주입
 ) {
-
     @Around(
         """
             execution(public com.back.global.rsData.RsData *(..)) &&
@@ -29,11 +28,11 @@ class ResponseAspect(
             )
         """
     )
-    @Throws(Throwable::class)
-    fun handleResponse(joinPoint: ProceedingJoinPoint): Any? {
-        val proceed = joinPoint.proceed()
-        val rsData = proceed as RsData<*>
-        response.status = rsData.statusCode
-        return proceed
+    fun handleResponseStrict(pjp: ProceedingJoinPoint): RsData<*> {
+        val result = pjp.proceed() as RsData<*>
+
+        response.status = result.statusCode
+
+        return result
     }
 }

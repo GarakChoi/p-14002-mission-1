@@ -1,7 +1,6 @@
 package com.back.global.initData
 
 import com.back.standard.util.Ut.cmd.runAsync
-import lombok.RequiredArgsConstructor
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
@@ -10,7 +9,6 @@ import org.springframework.context.annotation.Profile
 
 @Profile("dev")
 @Configuration
-@RequiredArgsConstructor
 class DevInitData {
     @Bean
     fun devInitDataApplicationRunner(): ApplicationRunner {
